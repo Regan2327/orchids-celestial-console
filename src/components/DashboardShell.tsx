@@ -12,7 +12,8 @@ import {
   X,
   Compass,
   Bell,
-  User
+  User,
+  LogOut
 } from "lucide-react";
 import { useState, ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -30,9 +31,17 @@ interface DashboardShellProps {
   children: ReactNode;
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  onSignOut?: () => void;
+  pilgrimName?: string;
 }
 
-export default function DashboardShell({ children, activeTab, setActiveTab }: DashboardShellProps) {
+export default function DashboardShell({ 
+  children, 
+  activeTab, 
+  setActiveTab, 
+  onSignOut,
+  pilgrimName = "Sharon"
+}: DashboardShellProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
@@ -96,12 +105,37 @@ export default function DashboardShell({ children, activeTab, setActiveTab }: Da
           ))}
         </nav>
 
-        <button 
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-3 rounded-full hover:bg-white/5 text-white/40 hover:text-sacred-gold transition-colors"
-        >
-          {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        <div className="w-full px-4 flex flex-col gap-4 mt-auto">
+          {onSignOut && (
+            <button 
+              onClick={onSignOut}
+              className={cn(
+                "w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 group hover:bg-rose-500/10 text-white/40 hover:text-rose-400",
+              )}
+            >
+              <LogOut className="w-6 h-6" />
+              <AnimatePresence>
+                {isSidebarOpen && (
+                  <motion.span
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    className="font-rajdhani font-semibold tracking-wider whitespace-nowrap"
+                  >
+                    Sign Out
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
+          )}
+
+          <button 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="w-full flex items-center justify-center p-3 rounded-full hover:bg-white/5 text-white/40 hover:text-sacred-gold transition-colors"
+          >
+            {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </motion.aside>
 
       {/* Main Content Area */}
@@ -126,7 +160,7 @@ export default function DashboardShell({ children, activeTab, setActiveTab }: Da
             
             <div className="flex items-center gap-3 pl-4 border-l border-white/10">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-semibold">Sister Grace</p>
+                <p className="text-sm font-semibold capitalize">{pilgrimName.toLowerCase()}</p>
                 <p className="text-[10px] text-white/40 uppercase tracking-tighter">Pilgrim Singer</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-sacred-gold/20 to-sacred-gold/40 border border-sacred-gold/20 flex items-center justify-center">
